@@ -67,15 +67,6 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
         this.nextNode = nextNode;
     }
 
-    // Method to print the current order of the ring
-    private void printCurrentRingOrder() throws RemoteException {
-        System.out.print("Current ring order: ");
-        for (Integer node : peers) {
-            System.out.print(node + " ");
-        }
-        System.out.println();
-    }
-
     public static void main(String[] args) throws RemoteException {
         PeerRegisterImpl peerRegister = new PeerRegisterImpl();
 
