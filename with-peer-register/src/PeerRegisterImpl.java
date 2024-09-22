@@ -48,29 +48,6 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
     }
 
     @Override
-    public Node getNextNode(int nodeId) throws RemoteException {
-        // Find the peer in the ArrayList and return the next peer in the ring
-        for (int i = 0; i < peers.size(); i++) {
-            try {
-                if (peers.get(i) == nodeId) {
-                    int nextIndex = (i + 1) % peers.size();
-                    if (nextIndex == 0) {
-                        return this;
-                    }
-                    System.out.println("PR: Next Node found for "+id);
-                    //Determine next node. Perform lookup, and return it to the caller.
-                    return (Node) registry.lookup("Node"+peers.get(nextIndex));
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            } catch (NotBoundException e) {
-                throw new RuntimeException("Next node not bound");
-            }
-        }
-        throw new RemoteException("PR: Node not found.");
-    }
-
-    @Override
     public void recieveElection(int candidateId, int originId) throws RemoteException {
         electionInProgress = true;
         System.out.println("PR: Election is occuring");
@@ -83,11 +60,6 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
         System.out.println("PR: Leader is "+leaderId);
         electionInProgress = false;
         nextNode.recieveLeader(leaderId, originId);
-    }
-
-    @Override
-    public int getNodeId() throws RemoteException {
-        return this.id;
     }
 
     @Override

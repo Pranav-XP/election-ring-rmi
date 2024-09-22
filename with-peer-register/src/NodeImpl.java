@@ -100,11 +100,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         handleUserInput();
     }
 
-    @Override
-    public int getNodeId() throws RemoteException {
-        return this.id;
-    }
-
     public void initiateElection() {
         System.out.println(id + ": Detected Leader failure. Initiating election . . .");
         try {
