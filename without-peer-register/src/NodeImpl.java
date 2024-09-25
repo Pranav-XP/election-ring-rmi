@@ -30,7 +30,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public void recieveElection(int candidateId, int originId) throws RemoteException {
+    public int recieveElection(int candidateId, int originId) throws RemoteException {
 
         //Simulate network delays
         try {
@@ -42,7 +42,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         if(!isAlive){
             //The node is dead. Assume recovery mechanism and pass to the next node.
             nextNode.recieveElection(candidateId, originId);
-            return;
         }
 
         if(this.id == originId) {
@@ -50,9 +49,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             hasVoted = true;
             System.out.println(id + ": Sending coordinator message.");
             nextNode.recieveLeader(leaderId, this.id);
-            return;
         }
-
 
         if (this.id > candidateId) {
             System.out.println(id + ": Recieving election message. Forwarding my ID.");
@@ -64,10 +61,11 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             hasVoted = true;
             nextNode.recieveElection(candidateId, originId);
         }
+        return 1;
     }
 
     @Override
-    public void recieveLeader(int leaderId, int originId) throws RemoteException {
+    public int recieveLeader(int leaderId, int originId) throws RemoteException {
 
         //Simulate network delays
         try {
@@ -75,27 +73,28 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
         if (this.id == originId) {
             hasVoted = false;
             System.out.println(id + ": New leader is " + leaderId);
             System.out.println(id + ": Election is complete.");
-            return;
+            handleUserInput();
+            return 1;
         }
-
         if (!isAlive) {
             //Node is dead. Pass to the next node.
             nextNode.recieveLeader(leaderId, originId);
         } else {
             hasVoted = false;
             System.out.println(id + ": New leader is " + leaderId);
-            nextNode.recieveLeader(leaderId, originId);
             this.leaderId = leaderId;
             if (this.id == leaderId) {
                 //Leader node becomes aware of results
                 isLeader = true;
             }
+            nextNode.recieveLeader(leaderId, originId);
         }
+        handleUserInput();
+        return 1;
     }
 
     public void initiateElection() {
@@ -104,6 +103,24 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             nextNode.recieveElection(id, id);
         } catch (RemoteException e) {
             System.out.println(id + ": Failed to initiate election");
+        }
+    }
+
+    // Method to handle user input
+    private void handleUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Type 'start' to initiate the election, or 'exit' to quit:");
+            String command = scanner.nextLine();
+
+            if (command.equalsIgnoreCase("start")) {
+                initiateElection();  // Start the election process
+            } else if (command.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting...");
+                System.exit(0);
+            } else {
+                System.out.println("Invalid command.");
+            }
         }
     }
 
@@ -154,22 +171,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
                 }
             }
 
-            // Allow user to initiate election manually
-            Scanner scanner = new Scanner(System.in);
-            while (true) {
-                System.out.println("Type 'start' to initiate the election, or 'exit' to quit:");
-                String command = scanner.nextLine();
-
-                if (command.equalsIgnoreCase("start")) {
-                    node.initiateElection();  // Start the election process
-                } else if (command.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting...");
-                    System.exit(0);
-                } else {
-                    System.out.println("Invalid command.");
-                }
+            while(true){
+                node.handleUserInput();
             }
-
         }catch(Exception e){
             System.out.println(e.getMessage());
         }

@@ -39,8 +39,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             throw new RuntimeException(e);
         }
 
-        if(!isAlive){
-            //The node is dead. Assume recovery mechanism and pass to the next node.
+        if(isLeader){
+            //The leader node is dead. Assume recovery mechanism and pass to the next node.
+            System.out.println("Leader has failed. Forwarding . . .");
             nextNode.recieveElection(candidateId, originId);
             return;
         }
@@ -80,11 +81,12 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             hasVoted = false;
             System.out.println(id + ": New leader is " + leaderId);
             System.out.println(id + ": Election is complete.");
-            return;
+            handleUserInput();
         }
 
-        if (!isAlive) {
-            //Node is dead. Pass to the next node.
+        if (isLeader) {
+            // Leader Node is dead. Pass to the next node.
+            System.out.println("Leader has failed. Forwarding . . .");
             nextNode.recieveLeader(leaderId, originId);
         } else {
             hasVoted = false;
@@ -96,7 +98,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
                 isLeader = true;
             }
         }
-
         handleUserInput();
     }
 
@@ -158,43 +159,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 
             System.out.println(nodeId + ": Registered with PeerRegister.");
 
-/*
-            // Retry Mechanism for looking up the next node
-            int retries = 10;
-            int delay = 3000;
-
-            while (retries > 0) {
-                try{
-                    int nextNodeID = peerRegister.getNextNode(nodeId).getNodeId();
-                    node.setNextNode(peerRegister.getNextNode(nodeId));
-                    System.out.println(nodeId + ": Connected to " + nextNodeID);
-                    break;
-                } catch (Exception e){
-                    retries--;
-                    System.err.println("Failed to lookup next node");
-                    if (retries > 0) {
-                        System.out.println(nodeId + ": Retrying . . .");
-                        try {
-                            Thread.sleep(delay); // Wait before retrying
-                        } catch (InterruptedException e1) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }else{
-                        System.err.println("Max tries reached. Exiting . . .");
-                        System.exit(1); // Exit if max retries reached
-                    }
-                }
-            }
-
-            // Request the next node from the PeerRegister
-            Node nextPeer = peerRegister.getNextNode(nodeId);
-            if (nextPeer != null) {
-                node.setNextNode(nextPeer);
-                System.out.println(nodeId + ": Next node set to " + nextPeer.getNodeId());
-            } else {
-                System.out.println(nodeId + ": No next node available.");
-            }
-*/
             node.handleUserInput();
 
         }catch(Exception e){
