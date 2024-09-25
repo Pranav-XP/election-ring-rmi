@@ -1,9 +1,9 @@
 # Election Ring RMI Projects
 
 ## Authors
-Pranav Chand
-Pui Kit Chen
-Aryan Shar,a
+1. Pranav Chand
+2. Pui Kit Chen
+3. Aryan Sharma
 
 This repository contains two different implementations of a distributed election algorithm using the Ring topology and Java RMI. Each implementation resides in its own directory and has a dedicated `README.md` file to explain the details, setup, unit tests and usage instructions for that specific version.
 
