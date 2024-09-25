@@ -12,12 +12,12 @@ This repository contains two different implementations of a distributed election
 1. **Election Ring Without Peer Register**  
    A simple implementation where each node is manually linked to its next node in the ring.
 
-   👉 [Go to README for Election Ring Without Peer Register]()<br></br>
+   👉 [Go to README for Election Ring Without Peer Register](https://github.com/Pranav-XP/election-ring-rmi/blob/6c36ea2acb9671fe58723d597aa36b78ddfd9400/without-peer-register/readme.md)<br></br>
 
 2. **Election Ring With Peer Register**  
    An advanced implementation where nodes register themselves with a `PeerRegister`, which manages the ring structure and node linkage dynamically.
 
-   👉 [Go to README for Election Ring With Peer Register](./with-peer-register/readme.md)<br></br>
+   👉 [Go to README for Election Ring With Peer Register](https://github.com/Pranav-XP/election-ring-rmi/blob/4867dbfc077160be3055e3ffef737297f40fa4ea/with-peer-register/readme.md)<br></br>
 
 ---
 
